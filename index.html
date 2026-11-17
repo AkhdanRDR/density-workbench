@@ -200,11 +200,11 @@
       <div class="section-header">
         <div>
           <span class="section-label">03 // SKENARIO STOK</span>
-          <h2 class="section-title">3 Situasi Perpindahan Stok Gudang ke Outlet</h2>
+          <h2 class="section-title">4 Situasi Perpindahan Stok Gudang ke Outlet</h2>
         </div>
         <div class="carousel-nav">
           <button type="button" id="prevCaseBtn" class="btn btn-icon interactive" aria-label="Kasus sebelumnya">&larr;</button>
-          <span class="mono case-counter" id="caseCounter">01 / 03</span>
+          <span class="mono case-counter" id="caseCounter">01 / 04</span>
           <button type="button" id="nextCaseBtn" class="btn btn-icon interactive" aria-label="Kasus berikutnya">&rarr;</button>
         </div>
       </div>
@@ -213,6 +213,7 @@
         <button type="button" class="case-tab active interactive" data-case="0" role="tab">01 / BERAT KE VOLUME</button>
         <button type="button" class="case-tab interactive" data-case="1" role="tab">02 / TANPA MASSA JENIS</button>
         <button type="button" class="case-tab interactive" data-case="2" role="tab">03 / SATUAN SEJENIS</button>
+        <button type="button" class="case-tab interactive" data-case="3" role="tab">04 / SATUAN TERPISAH</button>
       </div>
 
       <div class="case-viewer" id="caseViewer">
@@ -227,71 +228,86 @@
       <div class="section-header">
         <div>
           <span class="section-label">04 // ATURAN KONVERSI SATUAN</span>
-          <h2 class="section-title">Cara Sistem Menyesuaikan Satuan Gudang &amp; Outlet</h2>
+          <h2 class="section-title">Kenapa Satuan Outlet Harus Diterjemahkan ke Versi Gudang?</h2>
         </div>
-        <span class="badge badge-accent">Saat Tidak Pakai Massa Jenis</span>
+        <span class="badge badge-accent">Satuan Gudang &ne; Satuan Outlet</span>
+      </div>
+
+      <div class="whc-why-box">
+        <strong>Akar Masalahnya:</strong> Di sistem, daftar satuan milik <strong>Outlet</strong> dan milik <strong>Gudang</strong> tersimpan terpisah. Satuan &ldquo;Box&rdquo; atau &ldquo;mL&rdquo; milik Outlet dan milik Gudang adalah <strong>dua catatan berbeda</strong> yang bisa punya aturan konversi berbeda pula. Karena itu, sistem tidak bisa langsung mencocokkan ID satuannya &mdash; sistem harus mencari padanan <strong>nama satuan</strong> di sisi Gudang terlebih dahulu, baru memakai rumus konversi milik Gudang (atau beralih ke rumus Outlet jika di Gudang tidak tersedia).
       </div>
 
       <div class="whc-presets" role="group" aria-label="Pilih contoh situasi konversi">
-        <button type="button" class="btn btn-preset interactive active" data-whc-preset="req-eq-wh">PERMINTAAN = SATUAN GUDANG</button>
-        <button type="button" class="btn btn-preset interactive" data-whc-preset="req-eq-out">PERMINTAAN = SATUAN OUTLET</button>
-        <button type="button" class="btn btn-preset interactive" data-whc-preset="all-same">SEMUA SATUAN SAMA</button>
-        <button type="button" class="btn btn-preset interactive" data-whc-preset="neither">PERMINTAAN BEDA KEDUANYA</button>
-        <button type="button" class="btn btn-preset interactive" data-whc-preset="missing">DATA SATUAN BELUM LENGKAP</button>
+        <button type="button" class="btn btn-preset interactive active" data-whc-preset="req-eq-wh">04 / PERMINTAAN = SATUAN GUDANG</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="req-eq-out">03 / PERMINTAAN = SATUAN OUTLET</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="all-same">01 / SUDAH KLOP (SKIP)</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="neither">02 / FALLBACK KE OUTLET</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="missing">DATA GUDANG TIDAK ADA</button>
       </div>
 
       <div class="whc-grid">
         <div class="whc-controls">
           <div class="whc-select-grid">
             <div class="quiz-field">
-              <label for="whcWarehouseUnit" class="control-label">SATUAN PRODUK DI GUDANG</label>
+              <label for="whcWarehouseUnit" class="control-label">SATUAN STOK DI GUDANG</label>
               <select id="whcWarehouseUnit" class="input-field mono whc-select">
-                <option value="L" selected>L (Liter)</option>
+                <option value="Box" selected>Box</option>
+                <option value="L">L (Liter)</option>
                 <option value="mL">mL (Mililiter)</option>
-                <option value="Box">Box</option>
-                <option value="Pack">Pack</option>
+                <option value="Kg">Kg</option>
+                <option value="Pcs">Pcs</option>
               </select>
             </div>
             <div class="quiz-field">
               <label for="whcOutletUnit" class="control-label">SATUAN PRODUK DI OUTLET</label>
               <select id="whcOutletUnit" class="input-field mono whc-select">
-                <option value="mL" selected>mL (Mililiter)</option>
+                <option value="Pcs" selected>Pcs</option>
+                <option value="mL">mL (Mililiter)</option>
                 <option value="L">L (Liter)</option>
-                <option value="Pcs">Pcs</option>
+                <option value="Kg">Kg</option>
                 <option value="Pack">Pack</option>
               </select>
             </div>
             <div class="quiz-field">
-              <label for="whcRequestUnit" class="control-label">SATUAN YANG DIMINTA (REQUEST)</label>
+              <label for="whcRequestUnit" class="control-label">SATUAN YANG DIMINTA OUTLET</label>
               <select id="whcRequestUnit" class="input-field mono whc-select">
-                <option value="L" selected>L (Liter)</option>
+                <option value="Box" selected>Box</option>
+                <option value="L">L (Liter)</option>
                 <option value="mL">mL (Mililiter)</option>
-                <option value="Pack">Pack</option>
                 <option value="Pcs">Pcs</option>
-                <option value="Box">Box</option>
+                <option value="Gram">Gram</option>
+                <option value="Pack">Pack</option>
               </select>
             </div>
           </div>
 
-          <div class="whc-num-grid">
+          <div class="whc-num-grid whc-num-grid--3">
             <div class="quiz-field">
-              <label for="whcValueInput" class="control-label">JUMLAH YANG DIMINTA</label>
-              <input type="number" id="whcValueInput" class="input-field mono" value="1.6" step="any" min="0" />
+              <label for="whcValueInput" class="control-label">JUMLAH DIMINTA</label>
+              <input type="number" id="whcValueInput" class="input-field mono" value="2" step="any" min="0" />
             </div>
             <div class="quiz-field">
-              <label for="whcMultiplyInput" class="control-label">PENGALI KONVERSI GUDANG</label>
-              <input type="number" id="whcMultiplyInput" class="input-field mono" value="1000" step="any" min="0" />
+              <label for="whcMultiplyInput" class="control-label">KONVERSI GUDANG</label>
+              <input type="number" id="whcMultiplyInput" class="input-field mono" value="24" step="any" min="0" />
+            </div>
+            <div class="quiz-field">
+              <label for="whcOutletMultiplyInput" class="control-label">KONVERSI OUTLET</label>
+              <input type="number" id="whcOutletMultiplyInput" class="input-field mono" value="20" step="any" min="0" />
             </div>
           </div>
 
           <div class="whc-toggles">
             <label class="whc-check">
               <input type="checkbox" id="whcUnitsExist" checked />
-              <span>Satuan outlet &amp; satuan permintaan sudah terdaftar di gudang ini</span>
+              <span>Padanan nama satuan outlet &amp; permintaan tersedia di Gudang</span>
             </label>
             <label class="whc-check">
               <input type="checkbox" id="whcConvExist" checked />
-              <span>Aturan konversi antar kedua satuan sudah diatur di sistem</span>
+              <span>Rumus konversi versi <strong>Gudang</strong> tersedia</span>
+            </label>
+            <label class="whc-check">
+              <input type="checkbox" id="whcOutletConvExist" checked />
+              <span>Rumus konversi versi <strong>Outlet</strong> tersedia (cadangan)</span>
             </label>
           </div>
         </div>
@@ -299,8 +315,10 @@
         <div class="whc-output">
           <div class="output-header">
             <span class="control-label">ALUR KEPUTUSAN &amp; HASIL</span>
-            <span class="badge badge-accent" id="whcBranchBadge">PERMINTAAN = SATUAN GUDANG</span>
+            <span class="badge badge-accent" id="whcBranchBadge">KONVERSI VERSI GUDANG</span>
           </div>
+
+          <div class="whc-mapping" id="whcMapping"></div>
 
           <div class="whc-flags" id="whcFlags">
             <!-- Populated by JS -->
@@ -326,7 +344,7 @@
         </div>
         <div class="quiz-score-box">
           <span class="control-label">SKOR</span>
-          <span class="mono-accent" id="quizScoreText">0 / 4</span>
+          <span class="mono-accent" id="quizScoreText">0 / 6</span>
         </div>
       </div>
 

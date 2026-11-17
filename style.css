@@ -963,6 +963,22 @@ body {
   min-width: 0;
 }
 
+.whc-why-box {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.whc-why-box strong {
+  color: var(--color-text);
+}
+
 .whc-select-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -973,6 +989,33 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
+}
+
+.whc-num-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.whc-mapping {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.whc-map-card {
+  background: var(--color-surface-raised);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-xs);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  min-width: 0;
+}
+
+.whc-map-card strong {
+  display: block;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  margin-top: 2px;
 }
 
 .whc-select {
@@ -1320,6 +1363,8 @@ body {
 
   .case-params,
   .whc-num-grid,
+  .whc-num-grid--3,
+  .whc-mapping,
   .whc-flags {
     grid-template-columns: 1fr;
   }
