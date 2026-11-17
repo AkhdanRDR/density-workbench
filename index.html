@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konversi Stok // Panduan Density &amp; Satuan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dot-pattern dot-pattern--top" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">KONVERSI_STOK</span>
+        <span class="brand-tag">PANDUAN KONSEP</span>
+      </a>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <a href="#simulator" class="nav-link active">SIMULATOR</a>
+        <a href="#concept" class="nav-link">KONSEP</a>
+        <a href="#cases" class="nav-link">SKENARIO</a>
+        <a href="#wh-convert" class="nav-link">KONVERSI</a>
+        <a href="#quiz" class="nav-link">LATIHAN</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- HERO -->
+    <section class="hero-section reveal">
+      <div class="section-eyebrow">PANDUAN KONVERSI STOK GUDANG KE OUTLET</div>
+      <h1 class="hero-title">Kenapa 1.000 gram bibit parfum tidak sama dengan 1.000 ml?</h1>
+      <p class="hero-subtitle">
+        Panduan interaktif untuk memahami peran <strong>massa jenis (density)</strong> dan aturan konversi satuan saat memindahkan stok dari gudang ke outlet (toko) agar catatan stok tetap akurat.
+      </p>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SECTION 1: LIVE SIMULATOR -->
+    <section id="simulator" class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <span class="section-label">01 // SIMULATOR LANGSUNG</span>
+          <h2 class="section-title">Simulasi Timbangan Gudang vs Gelas Ukur Outlet</h2>
+        </div>
+        <button type="button" id="resetSimBtn" class="btn btn-outline btn-sm interactive">RESET DEFAULT</button>
+      </div>
+
+      <div class="sim-grid">
+        <!-- Controls -->
+        <div class="sim-controls">
+          <div class="control-row">
+            <span class="control-label">SATUAN GUDANG (BERAT)</span>
+            <div class="btn-group" role="group" aria-label="Satuan gudang">
+              <button type="button" class="btn btn-toggle interactive active" data-wh-unit="gram" data-scale="1">GRAM</button>
+              <button type="button" class="btn btn-toggle interactive" data-wh-unit="kg" data-scale="1000">KG</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label">SATUAN OUTLET (VOLUME)</span>
+            <div class="btn-group" role="group" aria-label="Satuan outlet">
+              <button type="button" class="btn btn-toggle interactive active" data-out-unit="ml" data-scale="1">ML</button>
+              <button type="button" class="btn btn-toggle interactive" data-out-unit="liter" data-scale="1000">LITER</button>
+            </div>
+          </div>
+
+          <div class="control-row control-row--stack">
+            <div class="label-pair">
+              <label for="qtyInput" class="control-label">JUMLAH PERMINTAAN</label>
+              <span class="mono-hint" id="baseGramsHint">= 1,000.00 gram</span>
+            </div>
+            <input type="number" id="qtyInput" class="input-field mono" value="1000" min="1" step="any" />
+          </div>
+
+          <div class="control-row control-row--stack">
+            <div class="label-pair">
+              <label for="densitySlider" class="control-label">MASSA JENIS / DENSITY (G/ML)</label>
+              <span class="mono-accent" id="densityValueLabel">0.90 g/ml</span>
+            </div>
+            <input type="range" id="densitySlider" class="range-slider" min="0.75" max="1.15" step="0.01" value="0.90" />
+            <div class="preset-group">
+              <button type="button" class="btn btn-preset interactive" data-density="0.85">FLORAL (0.85)</button>
+              <button type="button" class="btn btn-preset interactive active" data-density="0.90">STANDAR BIBIT (0.90)</button>
+              <button type="button" class="btn btn-preset interactive" data-density="1.00">AIR MURNI (1.00)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual + Output -->
+        <div class="sim-output">
+          <div class="output-header">
+            <span class="control-label">STOK DITERIMA OUTLET</span>
+            <span class="badge badge-accent">Rumus: Berat (gram) &divide; Massa Jenis</span>
+          </div>
+
+          <div class="display-metric">
+            <span id="outletResultDisplay" class="metric-number">1,111.11</span>
+            <span id="outletUnitDisplay" class="metric-unit">ml</span>
+          </div>
+
+          <div class="bars-wrapper">
+            <div class="bar-item">
+              <div class="bar-meta">
+                <span>ANGGAPAN 1:1 (TANPA MASSA JENIS)</span>
+                <span class="mono" id="naiveResultText">1,000.00 ml</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--muted" id="naiveBar" style="width: 75%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-item">
+              <div class="bar-meta">
+                <span>VOLUME ASLI DI OUTLET (PAKAI MASSA JENIS)</span>
+                <span class="mono" id="actualResultText">1,111.11 ml</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--accent" id="actualBar" style="width: 83.3%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diff-box" id="diffBox">
+            <span class="diff-label">SELISIH STOK (STOK TIDAK TERCATAT JIKA TANPA MASSA JENIS):</span>
+            <span class="mono diff-value" id="diffValueText">+111.11 ml</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SECTION 2: CONCEPT -->
+    <section id="concept" class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <span class="section-label">02 // KONSEP UTAMA</span>
+          <h2 class="section-title">Dari Berat Timbangan ke Volume Gelas Ukur</h2>
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-col">
+          <h3 class="sub-title">Kenapa Tidak Langsung 1 : 1?</h3>
+          <p class="body-text">
+            Patokan <strong>1 gram = 1 ml</strong> hanya berlaku untuk <strong>air murni</strong> karena massa jenisnya tepat <strong>1,0 g/ml</strong>. Bibit parfum adalah campuran minyak esensial yang lebih ringan daripada air (umumnya <strong>0,85 – 0,95 g/ml</strong>).
+          </p>
+          <p class="body-text">
+            Bayangkan <strong>1 kg kapas vs 1 kg besi</strong>: beratnya sama-sama 1 kg, tetapi ruang (volume) yang ditempati kapas jauh lebih besar. Begitu juga bibit parfum: karena lebih ringan, 1.000 gram bibit membutuhkan ruang lebih dari 1.000 ml.
+          </p>
+          <div class="formula-strip mono">
+            <span>Massa Jenis = Berat &divide; Volume</span>
+            <span class="arrow">&rarr;</span>
+            <span class="highlight">Volume = Berat &divide; Massa Jenis</span>
+          </div>
+        </div>
+
+        <div class="concept-col">
+          <h3 class="sub-title">3 Langkah Perhitungan Sistem</h3>
+          <div class="concept-steps">
+            <div class="step-card">
+              <span class="step-num">01</span>
+              <div>
+                <strong>Samakan berat ke gram</strong>
+                <p>Jika gudang menyimpan stok dalam kilogram (kg), sistem mengalikan jumlahnya dengan 1.000 agar menjadi gram terlebih dahulu.</p>
+              </div>
+            </div>
+            <div class="step-card">
+              <span class="step-num">02</span>
+              <div>
+                <strong>Ubah berat menjadi mililiter (ml)</strong>
+                <p>Berat dalam gram dibagi dengan angka massa jenis produk untuk mendapatkan volume cairan yang sebenarnya.</p>
+              </div>
+            </div>
+            <div class="step-card">
+              <span class="step-num">03</span>
+              <div>
+                <strong>Sesuaikan ke satuan outlet</strong>
+                <p>Jika outlet mencatat stok dalam liter, hasilnya dibagi 1.000. Jika sudah memakai ml, angkanya langsung masuk sebagai stok outlet.</p>
+              </div>
+            </div>
+          </div>
+          <p class="caption-text">
+            Jika tanpa massa jenis, outlet hanya mencatat 1.000 ml padahal fisik cairan yang diterima mencapai 1.111,11 ml—membuat stok fisik berlebih saat <em>stock opname</em>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SECTION 3: CASE CAROUSEL / STEPPER -->
+    <section id="cases" class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <span class="section-label">03 // SKENARIO STOK</span>
+          <h2 class="section-title">3 Situasi Perpindahan Stok Gudang ke Outlet</h2>
+        </div>
+        <div class="carousel-nav">
+          <button type="button" id="prevCaseBtn" class="btn btn-icon interactive" aria-label="Kasus sebelumnya">&larr;</button>
+          <span class="mono case-counter" id="caseCounter">01 / 03</span>
+          <button type="button" id="nextCaseBtn" class="btn btn-icon interactive" aria-label="Kasus berikutnya">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="case-tabs" role="tablist">
+        <button type="button" class="case-tab active interactive" data-case="0" role="tab">01 / BERAT KE VOLUME</button>
+        <button type="button" class="case-tab interactive" data-case="1" role="tab">02 / TANPA MASSA JENIS</button>
+        <button type="button" class="case-tab interactive" data-case="2" role="tab">03 / SATUAN SEJENIS</button>
+      </div>
+
+      <div class="case-viewer" id="caseViewer">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SECTION 4: REQUEST WAREHOUSE UNIT CONVERT -->
+    <section id="wh-convert" class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <span class="section-label">04 // ATURAN KONVERSI SATUAN</span>
+          <h2 class="section-title">Cara Sistem Menyesuaikan Satuan Gudang &amp; Outlet</h2>
+        </div>
+        <span class="badge badge-accent">Saat Tidak Pakai Massa Jenis</span>
+      </div>
+
+      <div class="whc-presets" role="group" aria-label="Pilih contoh situasi konversi">
+        <button type="button" class="btn btn-preset interactive active" data-whc-preset="req-eq-wh">PERMINTAAN = SATUAN GUDANG</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="req-eq-out">PERMINTAAN = SATUAN OUTLET</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="all-same">SEMUA SATUAN SAMA</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="neither">PERMINTAAN BEDA KEDUANYA</button>
+        <button type="button" class="btn btn-preset interactive" data-whc-preset="missing">DATA SATUAN BELUM LENGKAP</button>
+      </div>
+
+      <div class="whc-grid">
+        <div class="whc-controls">
+          <div class="whc-select-grid">
+            <div class="quiz-field">
+              <label for="whcWarehouseUnit" class="control-label">SATUAN PRODUK DI GUDANG</label>
+              <select id="whcWarehouseUnit" class="input-field mono whc-select">
+                <option value="L" selected>L (Liter)</option>
+                <option value="mL">mL (Mililiter)</option>
+                <option value="Box">Box</option>
+                <option value="Pack">Pack</option>
+              </select>
+            </div>
+            <div class="quiz-field">
+              <label for="whcOutletUnit" class="control-label">SATUAN PRODUK DI OUTLET</label>
+              <select id="whcOutletUnit" class="input-field mono whc-select">
+                <option value="mL" selected>mL (Mililiter)</option>
+                <option value="L">L (Liter)</option>
+                <option value="Pcs">Pcs</option>
+                <option value="Pack">Pack</option>
+              </select>
+            </div>
+            <div class="quiz-field">
+              <label for="whcRequestUnit" class="control-label">SATUAN YANG DIMINTA (REQUEST)</label>
+              <select id="whcRequestUnit" class="input-field mono whc-select">
+                <option value="L" selected>L (Liter)</option>
+                <option value="mL">mL (Mililiter)</option>
+                <option value="Pack">Pack</option>
+                <option value="Pcs">Pcs</option>
+                <option value="Box">Box</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="whc-num-grid">
+            <div class="quiz-field">
+              <label for="whcValueInput" class="control-label">JUMLAH YANG DIMINTA</label>
+              <input type="number" id="whcValueInput" class="input-field mono" value="1.6" step="any" min="0" />
+            </div>
+            <div class="quiz-field">
+              <label for="whcMultiplyInput" class="control-label">PENGALI KONVERSI GUDANG</label>
+              <input type="number" id="whcMultiplyInput" class="input-field mono" value="1000" step="any" min="0" />
+            </div>
+          </div>
+
+          <div class="whc-toggles">
+            <label class="whc-check">
+              <input type="checkbox" id="whcUnitsExist" checked />
+              <span>Satuan outlet &amp; satuan permintaan sudah terdaftar di gudang ini</span>
+            </label>
+            <label class="whc-check">
+              <input type="checkbox" id="whcConvExist" checked />
+              <span>Aturan konversi antar kedua satuan sudah diatur di sistem</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="whc-output">
+          <div class="output-header">
+            <span class="control-label">ALUR KEPUTUSAN &amp; HASIL</span>
+            <span class="badge badge-accent" id="whcBranchBadge">PERMINTAAN = SATUAN GUDANG</span>
+          </div>
+
+          <div class="whc-flags" id="whcFlags">
+            <!-- Populated by JS -->
+          </div>
+
+          <p class="body-text whc-explain" id="whcExplain"></p>
+
+          <div class="case-result-banner" id="whcResultBanner"></div>
+
+          <div class="concept-trace" id="whcCodeTrace"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- SECTION 5: CALCULATION QUIZ -->
+    <section id="quiz" class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <span class="section-label">05 // LATIHAN HITUNGAN</span>
+          <h2 class="section-title">Hitung Sisa Stok Gudang &amp; Total Stok Outlet</h2>
+        </div>
+        <div class="quiz-score-box">
+          <span class="control-label">SKOR</span>
+          <span class="mono-accent" id="quizScoreText">0 / 4</span>
+        </div>
+      </div>
+
+      <div class="quiz-list" id="quizList">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="mono muted">KONVERSI_STOK // PANDUAN MASSA JENIS &amp; SATUAN</span>
+      <span class="mono muted">SIMULATOR PERPINDAHAN STOK GUDANG KE OUTLET</span>
+    </div>
+  </footer>
+
+  <div class="dot-pattern dot-pattern--bottom" aria-hidden="true"></div>
+  <script src="script.js"></script>
+</body>
+</html>
